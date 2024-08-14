@@ -1,0 +1,113 @@
+#include <iostream>
+#include <vector>
+
+void displayBoard(const std::vector<char>& board);
+bool checkWin(const std::vector<char>& board, char player);
+bool checkDraw(const std::vector<char>& board);
+void switchPlayer(char& currentPlayer);
+bool playAgain();
+
+int main() {
+    do {
+        std::vector<char> board(9, ' '); 
+        char currentPlayer = 'X';
+        bool gameWon = false;
+        bool gameDraw = false;
+
+        std::cout << "Welcome to Tic-Tac-Toe" << std::endl;
+
+       
+        while (!gameWon && !gameDraw) {
+            displayBoard(board);
+
+           
+            int move;
+            std::cout << "Player " << currentPlayer << ", enter your move (1-9): ";
+            std::cin >> move;
+
+           
+            if (move < 1 || move > 9 || board[move - 1] != ' ') {
+                std::cout << "Invalid move Please try again." << std::endl;
+                continue;
+            }
+
+          
+            board[move - 1] = currentPlayer;
+
+          
+            gameWon = checkWin(board, currentPlayer);
+
+
+            if (!gameWon) {
+                gameDraw = checkDraw(board);
+            }
+
+           
+            if (!gameWon && !gameDraw) {
+                switchPlayer(currentPlayer);
+            }
+        }
+
+       
+        displayBoard(board);
+
+      
+        if (gameWon) {
+            std::cout << "Congratulations Player " << currentPlayer << " wins!" << std::endl;
+        } else if (gameDraw) {
+            std::cout << "It's a draw!" << std::endl;
+        }
+    } while (playAgain());
+
+    std::cout << "Thank you for playing Tic-Tac-Toe!" << std::endl;
+    return 0;
+}
+
+void displayBoard(const std::vector<char>& board) {
+    std::cout << "Current board:" << std::endl;
+    std::cout << " " << board[0] << " | " << board[1] << " | " << board[2] << " " << std::endl;
+    std::cout << "---|---|---" << std::endl;
+    std::cout << " " << board[3] << " | " << board[4] << " | " << board[5] << " " << std::endl;
+    std::cout << "---|---|---" << std::endl;
+    std::cout << " " << board[6] << " | " << board[7] << " | " << board[8] << " " << std::endl;
+}
+
+bool checkWin(const std::vector<char>& board, char player) {
+ 
+    const int winPatterns[8][3] = {
+        {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, 
+        {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, 
+        {0, 4, 8}, {2, 4, 6}
+    };
+
+    for (const auto& pattern : winPatterns) {
+        if (board[pattern[0]] == player && board[pattern[1]] == player && board[pattern[2]] == player) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+bool checkDraw(const std::vector<char>& board) {
+    for (char cell : board) {
+        if (cell == ' ') {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+void switchPlayer(char& currentPlayer) {
+    currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+}
+
+
+bool playAgain() {
+    char choice;
+    std::cout << "Do you want to play again? (y/n): ";
+    std::cin >> choice;
+    return choice == 'y' || choice == 'Y';
+}
